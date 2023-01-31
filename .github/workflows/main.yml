@@ -23,7 +23,9 @@ jobs:
         uses: actions/checkout@v2
       - name: Enable PowerTools on EL8
         if: matrix.os == 8
-        run: dnf config-manager --set-enabled powertools
+        run: |
+          dnf -y install 'dnf-command(config-manager)'
+          dnf -y config-manager --set-enabled powertools
       - name: Build RPM
         run: |
           dnf -y install dnf-utils epel-release rpm-build rpmdevtools
