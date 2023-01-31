@@ -1,0 +1,23 @@
+name: Build RPMs
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build-rpms:
+    runs-on: ubuntu-22.04
+    image: almalinux:${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - 8
+          - 9
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build RPM
+        run: |
+          dnf -y install rpm-build rpmdevtools
