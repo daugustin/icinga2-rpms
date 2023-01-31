@@ -9,7 +9,8 @@ on:
 jobs:
   build-rpms:
     runs-on: ubuntu-22.04
-    image: almalinux:${{ matrix.os }}
+    container:
+      image: almalinux:${{ matrix.os }}
     strategy:
       matrix:
         os:
