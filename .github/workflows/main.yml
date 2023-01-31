@@ -12,7 +12,7 @@ jobs:
     container:
       image: almalinux:${{ matrix.os }}
       env:
-        ICINGA_VER: 2.13.6
+        ICINGA_VER: 2.11.4
     strategy:
       matrix:
         os:
