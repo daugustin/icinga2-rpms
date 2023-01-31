@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-22.04
     container:
       image: almalinux:${{ matrix.os }}
+      env:
+        ICINGA_VER: 2.13.6
     strategy:
       matrix:
         os:
@@ -22,3 +24,8 @@ jobs:
       - name: Build RPM
         run: |
           dnf -y install rpm-build rpmdevtools
+          rpmdev-setuptree
+          curl -sL -o ~/rpmbuild/SPECS/icinga2.spec https://git.icinga.com/packaging/rpm-icinga2/-/raw/master/icinga2.spec
+          curl -sL -o ~/rpmbuild/SOURCES/v${ICINGA_VER}.tar.gz https://github.com/Icinga/icinga2/archive/refs/tags/v${ICINGA_VER}.tar.gz
+          yum-builddep -y ~/rpmbuild/SPECS/icinga2.spec
+          rpmbuild -bb ~/rpmbuild/SPECS/icinga2.spec
