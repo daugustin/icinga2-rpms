@@ -20,18 +20,23 @@ jobs:
           - 9
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Enable PowerTools on EL8
         if: matrix.os == 8
         run: |
           dnf -y install 'dnf-command(config-manager)'
           dnf -y config-manager --set-enabled powertools
-      - name: Build RPM
+      - name: Setup Build Environment
         run: |
           dnf -y install dnf-utils epel-release rpm-build rpmdevtools
           rpmdev-setuptree
+      - name: Download Sources
+        run: |
           curl -sL -o ~/rpmbuild/SPECS/icinga2.spec https://git.icinga.com/packaging/rpm-icinga2/-/raw/master/icinga2.spec
           curl -sL -o ~/rpmbuild/SOURCES/v${ICINGA_VER}.tar.gz https://github.com/Icinga/icinga2/archive/refs/tags/v${ICINGA_VER}.tar.gz
-          sed -i "s/2\.11\.4/${ICINGA_VER}/g" ~/rpmbuild/SPECS/icinga2.spec
+      - name: Patch Sources
+        run: sed -i "s/2\.11\.4/${ICINGA_VER}/g" ~/rpmbuild/SPECS/icinga2.spec
+      - name: Build RPM
+        run: |
           yum-builddep -y ~/rpmbuild/SPECS/icinga2.spec
-          rpmbuild -bb ~/rpmbuild/SPECS/icinga2.spec
+          rpmbuild --define "revision 2" -bb ~/rpmbuild/SPECS/icinga2.spec
