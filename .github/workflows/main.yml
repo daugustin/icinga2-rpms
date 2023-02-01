@@ -1,11 +1,6 @@
 name: Build RPMs
-
 on:
   push:
-    branches:
-      - master
-  workflow_dispatch:
-
 jobs:
   build-rpms:
     runs-on: ubuntu-22.04
@@ -36,7 +31,12 @@ jobs:
           curl -sL -o ~/rpmbuild/SOURCES/v${ICINGA_VER}.tar.gz https://github.com/Icinga/icinga2/archive/refs/tags/v${ICINGA_VER}.tar.gz
       - name: Patch Sources
         run: sed -i "s/2\.11\.4/${ICINGA_VER}/g" ~/rpmbuild/SPECS/icinga2.spec
-      - name: Build RPM
+      - name: Build RPMs
         run: |
           yum-builddep -y ~/rpmbuild/SPECS/icinga2.spec
           rpmbuild --define "revision 2" -bb ~/rpmbuild/SPECS/icinga2.spec
+      - name: Upload RPMs
+        if: ${{ github.ref == 'refs/heads/master' }}
+        uses: actions/upload-artifact@v3
+        with:
+          path: ~/rpmbuild/RPMS/x86_64/icinga2*.rpm
