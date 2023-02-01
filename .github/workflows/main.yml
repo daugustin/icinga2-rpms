@@ -24,6 +24,7 @@ jobs:
         run: |
           dnf -y install dnf-utils epel-release rpm-build rpmdevtools
           rpmdev-setuptree
+          git config --global --add safe.directory $GITHUB_WORKSPACE
       - name: Download Sources
         run: |
           curl -sL -o ~/rpmbuild/SPECS/icinga2.spec https://git.icinga.com/packaging/rpm-icinga2/-/raw/master/icinga2.spec
