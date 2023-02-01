@@ -3,7 +3,7 @@ on:
   push:
 jobs:
   build-rpms:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     container:
       image: almalinux:9
       env:
