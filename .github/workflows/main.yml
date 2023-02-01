@@ -44,7 +44,7 @@ jobs:
           release_name: ${ICINGA_VER}-el${{ matrix.os }}-1
           tag_name: ${ICINGA_VER}-el${{ matrix.os }}-1
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
       - name: Upload RPMs
         if: ${{ github.ref == 'refs/heads/master' }}
         uses: actions/upload-artifact@v3
