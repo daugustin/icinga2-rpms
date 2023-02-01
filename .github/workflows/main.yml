@@ -3,7 +3,7 @@ on:
   push:
 jobs:
   build-rpms:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     container:
       image: almalinux:9
       env:
@@ -24,7 +24,7 @@ jobs:
         run: |
           dnf -y install dnf-utils epel-release git rpm-build rpmdevtools
           rpmdev-setuptree
-          git config --global --add safe.directory $GITHUB_WORKSPACE
+#          git config --global --add safe.directory $GITHUB_WORKSPACE
       - name: Download Sources
         run: |
           curl -sL -o ~/rpmbuild/SPECS/icinga2.spec https://git.icinga.com/packaging/rpm-icinga2/-/raw/master/icinga2.spec
@@ -35,11 +35,16 @@ jobs:
         run: |
           yum-builddep -y ~/rpmbuild/SPECS/icinga2.spec
           rpmbuild --define "revision 2" -bb ~/rpmbuild/SPECS/icinga2.spec
-      - name: Create tag
-        uses: rickstaa/action-create-tag@v1
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
         with:
-          tag: ${{ env.ICINGA_VER }}-2
-          message: test
+          custom_tag: ${{ env.ICINGA_VER }}-2
+#      - name: Create tag
+#        uses: rickstaa/action-create-tag@v1
+#        with:
+#          tag: ${{ env.ICINGA_VER }}-2
+#          message: test
       - name: Create release
         uses: softprops/action-gh-release@v1
 #        id: create_release
