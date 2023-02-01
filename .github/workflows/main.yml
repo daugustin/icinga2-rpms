@@ -16,6 +16,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Read Version
+        run: export ICINGA_TEST_VER=$(cat VERSION)
+      - name: Print Version
+        run: echo $ICINGA_TEST_VER
       - name: Enable PowerTools on EL8
         if: matrix.os == 8
         run: |
@@ -41,8 +45,8 @@ jobs:
         with:
           draft: false
           prerelease: false
-          release_name: ${ICINGA_VER}-el${{ matrix.os }}-1
-          tag_name: ${ICINGA_VER}-el${{ matrix.os }}-1
+          release_name: ${{ env.ICINGA_VER }}-el${{ matrix.os }}-2
+          tag_name: ${{ env.ICINGA_VER }}-el${{ matrix.os }}-2
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
       - name: Upload RPMs
