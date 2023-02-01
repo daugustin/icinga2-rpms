@@ -40,6 +40,7 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.1
         with:
           custom_tag: ${{ env.ICINGA_VER }}-2
+          github_token: ${{ secrets.PAT }}
 #      - name: Create tag
 #        uses: rickstaa/action-create-tag@v1
 #        with:
