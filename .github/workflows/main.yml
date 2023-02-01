@@ -35,6 +35,16 @@ jobs:
         run: |
           yum-builddep -y ~/rpmbuild/SPECS/icinga2.spec
           rpmbuild --define "revision 2" -bb ~/rpmbuild/SPECS/icinga2.spec
+      - name: Create release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          draft: false
+          prerelease: false
+          release_name: ${ICINGA_VER}-el${{ matrix.os }}-1
+          tag_name: ${ICINGA_VER}-el${{ matrix.os }}-1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Upload RPMs
         if: ${{ github.ref == 'refs/heads/master' }}
         uses: actions/upload-artifact@v3
