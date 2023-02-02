@@ -7,17 +7,12 @@ jobs:
     container:
       image: almalinux:9
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v3
       - name: Read Version
         run: echo "ICINGA_VER=$(cat VERSION)" >> $GITHUB_ENV
-      - name: Print Version
-        run: echo $ICINGA_VER
-#      - name: Enable PowerTools on EL8
-#        if: matrix.os == 8
-#        run: |
-#          dnf -y install 'dnf-command(config-manager)'
-#          dnf -y config-manager --set-enabled powertools
+      - name: Read Revision
+        run: echo "ICINGA_REV=$(cat REVISION)" >> $GITHUB_ENV
       - name: Setup Build Environment
         run: |
           dnf -y install dnf-utils epel-release git rpm-build rpmdevtools
@@ -33,11 +28,11 @@ jobs:
         run: |
           yum-builddep -y ~/rpmbuild/SPECS/icinga2.spec
           rpmbuild --define "revision 2" -bb ~/rpmbuild/SPECS/icinga2.spec
-      - name: Bump version and push tag
+      - name: Create Tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.1
         with:
-          custom_tag: ${{ env.ICINGA_VER }}-2
+          custom_tag: ${{ env.ICINGA_VER }}-${{ env.ICINGA_REV }}
           github_token: ${{ secrets.PAT }}
 #      - name: Create tag
 #        uses: rickstaa/action-create-tag@v1
@@ -48,11 +43,11 @@ jobs:
         uses: softprops/action-gh-release@v1
 #        id: create_release
         with:
-          release_name: ${{ env.ICINGA_VER }}-2
-          tag_name: ${{ env.ICINGA_VER }}-2
-          files: ~/rpmbuild/RPMS/x86_64/icinga2*.rpm
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
+          name: Icinga2 EL9 ${{ env.ICINGA_VER }}-${{ env.ICINGA_REV }}
+          tag_name: ${{ env.ICINGA_VER }}-${{ env.ICINGA_REV }}
+          files: ${{ env.HOME }}/rpmbuild/RPMS/x86_64/icinga2*.rpm
+          body: test
+          token: ${{ secrets.PAT }}
 #      - name: Upload RPMs
 #        if: ${{ github.ref == 'refs/heads/master' }}
 #        uses: actions/upload-artifact@v3
