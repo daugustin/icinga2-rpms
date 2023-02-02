@@ -1,9 +1,11 @@
 name: Build RPMs
 on:
   push:
+    branches:
+      - master
 jobs:
   build-rpms:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     container:
       image: almalinux:9
     steps:
@@ -17,39 +19,26 @@ jobs:
         run: |
           dnf -y install dnf-utils epel-release git rpm-build rpmdevtools
           rpmdev-setuptree
-#          git config --global --add safe.directory $GITHUB_WORKSPACE
       - name: Download Sources
         run: |
-          curl -L -o ~/rpmbuild/SPECS/icinga2.spec https://git.icinga.com/packaging/rpm-icinga2/-/raw/master/icinga2.spec
-          curl -L -o ~/rpmbuild/SOURCES/v${ICINGA_VER}.tar.gz https://github.com/Icinga/icinga2/archive/refs/tags/v${ICINGA_VER}.tar.gz
+          curl -L -o /github/home/rpmbuild/SPECS/icinga2.spec https://git.icinga.com/packaging/rpm-icinga2/-/raw/master/icinga2.spec
+          curl -L -o /github/home/rpmbuild/SOURCES/v${ICINGA_VER}.tar.gz https://github.com/Icinga/icinga2/archive/refs/tags/v${ICINGA_VER}.tar.gz
       - name: Patch Sources
         run: sed -i "s/2\.11\.4/${ICINGA_VER}/g" ~/rpmbuild/SPECS/icinga2.spec
       - name: Build RPMs
         run: |
-          yum-builddep -y ~/rpmbuild/SPECS/icinga2.spec
-          rpmbuild --define "revision 2" -bb ~/rpmbuild/SPECS/icinga2.spec
+          yum-builddep -y /github/home/rpmbuild/SPECS/icinga2.spec
+          rpmbuild --define "revision ${ICINGA_REV}" -bb ~/rpmbuild/SPECS/icinga2.spec
       - name: Create Tag
-        id: tag_version
         uses: mathieudutour/github-tag-action@v6.1
         with:
           custom_tag: ${{ env.ICINGA_VER }}-${{ env.ICINGA_REV }}
           github_token: ${{ secrets.PAT }}
-#      - name: Create tag
-#        uses: rickstaa/action-create-tag@v1
-#        with:
-#          tag: ${{ env.ICINGA_VER }}-2
-#          message: test
       - name: Create release
         uses: softprops/action-gh-release@v1
-#        id: create_release
         with:
           name: Icinga2 EL9 ${{ env.ICINGA_VER }}-${{ env.ICINGA_REV }}
           tag_name: ${{ env.ICINGA_VER }}-${{ env.ICINGA_REV }}
-          files: ${{ env.HOME }}/rpmbuild/RPMS/x86_64/icinga2*.rpm
+          files: /github/home/rpmbuild/RPMS/x86_64/icinga2*.rpm
           body: test
           token: ${{ secrets.PAT }}
-#      - name: Upload RPMs
-#        if: ${{ github.ref == 'refs/heads/master' }}
-#        uses: actions/upload-artifact@v3
-#        with:
-#          path: ~/rpmbuild/RPMS/x86_64/icinga2*.rpm
