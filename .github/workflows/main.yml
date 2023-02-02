@@ -20,7 +20,10 @@ jobs:
           dnf -y install dnf-utils epel-release git rpm-build rpmdevtools
           rpmdev-setuptree
           rpm --import icinga.key
-          echo $RPM_GPGKEY | gpg --import
+      - name: Import Key
+        uses: crazy-max/ghaction-import-gpg@v5
+        with:
+          gpg_private_key: ${{ secrets.RPM_GPGKEY }}
       - name: Download Sources
         run: |
           curl -L -o /github/home/rpmbuild/SPECS/icinga2.spec https://git.icinga.com/packaging/rpm-icinga2/-/raw/master/icinga2.spec
