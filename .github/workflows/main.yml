@@ -17,7 +17,7 @@ jobs:
         run: echo "ICINGA_REV=$(cat REVISION)" >> $GITHUB_ENV
       - name: Setup Build Environment
         run: |
-          dnf -y install dnf-utils epel-release git rpm-build rpmdevtools
+          dnf -y install dnf-utils epel-release git rpm-build rpm-sign rpmdevtools
           rpmdev-setuptree
           rpm --import icinga.key
       - name: Import Key
@@ -29,11 +29,13 @@ jobs:
           curl -L -o /github/home/rpmbuild/SPECS/icinga2.spec https://git.icinga.com/packaging/rpm-icinga2/-/raw/master/icinga2.spec
           curl -L -o /github/home/rpmbuild/SOURCES/v${ICINGA_VER}.tar.gz https://github.com/Icinga/icinga2/archive/refs/tags/v${ICINGA_VER}.tar.gz
       - name: Patch Sources
-        run: sed -i "s/2\.11\.4/${ICINGA_VER}/g" ~/rpmbuild/SPECS/icinga2.spec
+        run: |
+          sed -i "s/2\.11\.4/${ICINGA_VER}/g" /github/home/rpmbuild/SPECS/icinga2.spec
+          sed -i "s/define revision.*/define revision ${ICINGA_REV}/g" /github/home/rpmbuild/SPECS/icinga2.spec
       - name: Build RPMs
         run: |
           yum-builddep -y /github/home/rpmbuild/SPECS/icinga2.spec
-          rpmbuild --define "revision ${ICINGA_REV}" -bb ~/rpmbuild/SPECS/icinga2.spec
+          rpmbuild -bb /github/home/rpmbuild/SPECS/icinga2.spec
           rpmsign --addsign /github/home/rpmbuild/RPMS/x86_64/icinga2*.rpm
       - name: Create Tag
         uses: mathieudutour/github-tag-action@v6.1
@@ -43,8 +45,7 @@ jobs:
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
-          name: Icinga2 EL9 ${{ env.ICINGA_VER }}-${{ env.ICINGA_REV }}
           tag_name: ${{ env.ICINGA_VER }}-${{ env.ICINGA_REV }}
           files: /github/home/rpmbuild/RPMS/x86_64/icinga2*.rpm
-          body: test
+          body: Release Icinga RPMs ${{ env.ICINGA_VER }} (Rev. ${{ env.ICINGA_REV }})
           token: ${{ secrets.PAT }}
