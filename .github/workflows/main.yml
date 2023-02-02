@@ -22,6 +22,8 @@ jobs:
           dnf -y install dnf-utils epel-release git rpm-build rpm-sign rpmdevtools
           rpmdev-setuptree
           rpm --import icinga.key
+          echo "%_gpg_name ${RPM_SIGNER}" >> /github/home/.rpmmacros
+          cat /github/home/.rpmmacros
       - name: Import Key
         uses: crazy-max/ghaction-import-gpg@v5
         with:
@@ -37,7 +39,7 @@ jobs:
       - name: Build RPMs
         run: |
           yum-builddep -y /github/home/rpmbuild/SPECS/icinga2.spec
-          rpmbuild --define "_gpg_name ${RPM_SIGNER}" -bb /github/home/rpmbuild/SPECS/icinga2.spec
+          rpmbuild -bb /github/home/rpmbuild/SPECS/icinga2.spec
           rpmsign --addsign /github/home/rpmbuild/RPMS/x86_64/icinga2*.rpm
       - name: Create Tag
         uses: mathieudutour/github-tag-action@v6.1
