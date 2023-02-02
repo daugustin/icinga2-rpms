@@ -19,6 +19,8 @@ jobs:
         run: |
           dnf -y install dnf-utils epel-release git rpm-build rpmdevtools
           rpmdev-setuptree
+          rpm --import icinga.key
+          echo $RPM_GPGKEY | gpg --import
       - name: Download Sources
         run: |
           curl -L -o /github/home/rpmbuild/SPECS/icinga2.spec https://git.icinga.com/packaging/rpm-icinga2/-/raw/master/icinga2.spec
