@@ -34,6 +34,7 @@ jobs:
         run: |
           yum-builddep -y /github/home/rpmbuild/SPECS/icinga2.spec
           rpmbuild --define "revision ${ICINGA_REV}" -bb ~/rpmbuild/SPECS/icinga2.spec
+          rpmsign --addsign /github/home/rpmbuild/RPMS/x86_64/icinga2*.rpm
       - name: Create Tag
         uses: mathieudutour/github-tag-action@v6.1
         with:
