@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: almalinux:9
+    env:
+      RPM_SIGNER: Daniel Augustin <hossie@hossie.de>
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -35,7 +37,7 @@ jobs:
       - name: Build RPMs
         run: |
           yum-builddep -y /github/home/rpmbuild/SPECS/icinga2.spec
-          rpmbuild -bb /github/home/rpmbuild/SPECS/icinga2.spec
+          rpmbuild --define "_gpg_name ${RPM_SIGNER}" -bb /github/home/rpmbuild/SPECS/icinga2.spec
           rpmsign --addsign /github/home/rpmbuild/RPMS/x86_64/icinga2*.rpm
       - name: Create Tag
         uses: mathieudutour/github-tag-action@v6.1
