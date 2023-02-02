@@ -6,17 +6,13 @@ jobs:
     runs-on: ubuntu-22.04
     container:
       image: almalinux:9
-      env:
-        ICINGA_VER: 2.13.6
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Read Version
-        run: |
-          ICINGA_TEST_VER=$(cat VERSION)
-          echo "ICINGA_TEST_VER=$ICINGA_TEST_VER" >> $GITHUB_ENV
+        run: echo "ICINGA_VER=$(cat VERSION)" >> $GITHUB_ENV
       - name: Print Version
-        run: echo $ICINGA_TEST_VER
+        run: echo $ICINGA_VER
 #      - name: Enable PowerTools on EL8
 #        if: matrix.os == 8
 #        run: |
@@ -29,8 +25,8 @@ jobs:
 #          git config --global --add safe.directory $GITHUB_WORKSPACE
       - name: Download Sources
         run: |
-          curl -sL -o ~/rpmbuild/SPECS/icinga2.spec https://git.icinga.com/packaging/rpm-icinga2/-/raw/master/icinga2.spec
-          curl -sL -o ~/rpmbuild/SOURCES/v${ICINGA_VER}.tar.gz https://github.com/Icinga/icinga2/archive/refs/tags/v${ICINGA_VER}.tar.gz
+          curl -L -o ~/rpmbuild/SPECS/icinga2.spec https://git.icinga.com/packaging/rpm-icinga2/-/raw/master/icinga2.spec
+          curl -L -o ~/rpmbuild/SOURCES/v${ICINGA_VER}.tar.gz https://github.com/Icinga/icinga2/archive/refs/tags/v${ICINGA_VER}.tar.gz
       - name: Patch Sources
         run: sed -i "s/2\.11\.4/${ICINGA_VER}/g" ~/rpmbuild/SPECS/icinga2.spec
       - name: Build RPMs
