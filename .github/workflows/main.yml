@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Install shell deps
         run: dnf install -y git jq
+      - name: Fix git
+        run: git config --global --add safe.directory '*'
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
