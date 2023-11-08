@@ -4,7 +4,7 @@
 The GitHub Workflow `main.yml` builds the RPM specified in `VERSION` and `REVISION`. It will upload it and create a [GitHub Release](https://github.com/daugustin/icinga2-rpms/releases).
 # Using
 ## Manually
-You can download the files from the [releases page](https://github.com/daugustin/icinga2-rpms/releases).
+You can download the files from the [releases page](https://github.com/daugustin/icinga2-rpms/releases/latest).
 ## Repo
 ### Using my repository
 You can use my repository by using the yum.repo File `icinga.repo` (Copy it to `/etc/yum.repos.d`).
