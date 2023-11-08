@@ -7,6 +7,7 @@ jobs:
   build-rpms:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         version:
           - 8
@@ -23,7 +24,9 @@ jobs:
       - name: Read Revision
         run: echo "ICINGA_REV=$(cat REVISION)" >> $GITHUB_ENV
       - name: Enable Repos on EL8
-        run: dnf config-manager --set-enabled powertools
+        run: |
+          dnf install 'dnf-command(config-manager)'
+          dnf config-manager --set-enabled powertools
         if: matrix.version == 8
       - name: Setup Build Environment
         run: |
