@@ -19,6 +19,10 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+      - name: Install jq
+        run: |
+          apt update 
+          apt -y install jq
       - name: Get Version
         run: echo "ICINGA_VER=$(./get_version.sh)" >> $GITHUB_ENV
       - name: Get Revision
