@@ -28,7 +28,7 @@ jobs:
       - name: Get Version
         run: echo "ICINGA_VER=$(./get_version.sh)" >> $GITHUB_ENV
       - name: Get Revision
-        run: ./get_revision.sh
+        run: echo "ICINGA_REV=$(./get_revision.sh)" >> $GITHUB_ENV
       - name: Enable Repos on EL8
         run: |
           dnf -y install 'dnf-command(config-manager)'
