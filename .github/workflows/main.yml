@@ -58,15 +58,15 @@ jobs:
           yum-builddep -y /github/home/rpmbuild/SPECS/icinga2.spec
           rpmbuild -bb /github/home/rpmbuild/SPECS/icinga2.spec
           rpmsign --addsign /github/home/rpmbuild/RPMS/x86_64/icinga2*.rpm
-      - name: Create Tag
-        uses: mathieudutour/github-tag-action@v6.1
-        with:
-          custom_tag: v${{ env.ICINGA_VER }}-${{ env.ICINGA_REV }}
-          github_token: ${{ secrets.PAT }}
+#      - name: Create Tag
+#        uses: mathieudutour/github-tag-action@v6.1
+#        with:
+#          custom_tag: v${{ env.ICINGA_VER }}-${{ env.ICINGA_REV }}
+#          github_token: ${{ secrets.PAT }}
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ env.ICINGA_VER }}-${{ env.ICINGA_REV }}
+          tag_name: ${{ env.ICINGA_VER }}-${{ env.ICINGA_REV }}
           files: /github/home/rpmbuild/RPMS/x86_64/icinga2*.rpm
           body: Release Icinga RPMs ${{ env.ICINGA_VER }} (Rev. ${{ env.ICINGA_REV }})
           token: ${{ secrets.PAT }}
