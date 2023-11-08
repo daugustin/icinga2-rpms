@@ -22,6 +22,9 @@ jobs:
         run: echo "ICINGA_VER=$(cat VERSION)" >> $GITHUB_ENV
       - name: Read Revision
         run: echo "ICINGA_REV=$(cat REVISION)" >> $GITHUB_ENV
+      - name: Enable Repos on EL8
+        run: dnf config-manager --set-enabled powertools
+        if: matrix.version == 8
       - name: Setup Build Environment
         run: |
           dnf -y install dnf-utils epel-release git rpm-build rpm-sign rpmdevtools

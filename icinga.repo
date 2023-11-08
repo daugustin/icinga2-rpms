@@ -1,0 +1,6 @@
+[icinga]
+name=Icinga2 for EL8+
+enabled=1
+baseurl=https://rpms.hossie.de/icinga2/el$releasever
+gpgcheck=1
+gpgkey=https://rpms.hossie.de/icinga2/icinga.key
