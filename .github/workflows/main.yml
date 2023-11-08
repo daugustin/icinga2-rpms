@@ -6,8 +6,13 @@ on:
 jobs:
   build-rpms:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version:
+          - 8
+          - 9
     container:
-      image: almalinux:9
+      image: almalinux:${{ matrix.version }}
     env:
       RPM_SIGNER: Daniel Augustin <hossie@hossie.de>
     steps:
@@ -30,8 +35,8 @@ jobs:
           gpg_private_key: ${{ secrets.RPM_GPGKEY }}
       - name: Download Sources
         run: |
-          curl -L -o /github/home/rpmbuild/SPECS/icinga2.spec https://git.icinga.com/packaging/rpm-icinga2/-/raw/master/icinga2.spec
-          curl -L -o /github/home/rpmbuild/SOURCES/v${ICINGA_VER}.tar.gz https://github.com/Icinga/icinga2/archive/refs/tags/v${ICINGA_VER}.tar.gz
+          curl -LO --output-dir /github/home/rpmbuild/SPECS https://git.icinga.com/packaging/rpm-icinga2/-/raw/master/icinga2.spec
+          curl -LO --output-dir /github/home/rpmbuild/SOURCES https://github.com/Icinga/icinga2/archive/refs/tags/v${ICINGA_VER}.tar.gz
       - name: Patch Sources
         run: |
           sed -i "s/2\.11\.4/${ICINGA_VER}/g" /github/home/rpmbuild/SPECS/icinga2.spec
