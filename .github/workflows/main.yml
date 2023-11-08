@@ -20,7 +20,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
       - name: Install jq
-        run: dnf install jq
+        run: dnf install -y jq
       - name: Get Version
         run: echo "ICINGA_VER=$(./get_version.sh)" >> $GITHUB_ENV
       - name: Get Revision
